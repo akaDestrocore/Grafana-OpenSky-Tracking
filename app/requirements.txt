@@ -1,0 +1,4 @@
+aiohttp==3.11.12
+influxdb-client==1.48.0
+numpy==1.26.4
+requests==2.31.0
