@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: flights
+    type: influxdb
+    url: http://influxdb:8086
+    access: proxy
+    basicAuth: false
+    database: flights
+    user: ${INFLUXDB2_ADMIN_USER}
+    secureJsonData:
+      token: ${INFLUXDB2_ADMIN_TOKEN}
+    jsonData:
+      organization: ${INFLUXDB2_ORG}
+      defaultBucket: flights
+      version: Flux 
+      httpMode: POST
