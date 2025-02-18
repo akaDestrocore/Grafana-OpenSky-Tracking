@@ -9,6 +9,15 @@ from aiohttp import ClientTimeout
 import time
 import os
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('/app/logs/flight_collector.log'),
+        logging.StreamHandler()
+    ]
+)
+
 # InfluxDB configuration from environment variables
 INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://localhost:8086')
 INFLUXDB_TOKEN_FILE = os.getenv('INFLUXDB_TOKEN_FILE')
@@ -25,7 +34,7 @@ INFLUXDB_BUCKET = os.getenv('INFLUXDB_BUCKET', 'flights')
 OPENSKY_API_URL = os.getenv('OPENSKY_API_URL', 'https://opensky-network.org/api/states/all')
 
 DAILY_LIMIT = 100  # 400 credits per day, 4 credits per request = 100 requests
-REQUEST_INTERVAL = 400 
+REQUEST_INTERVAL = 960  # 16 min
 REQUEST_TIMEOUT = 30 
 
 class FlightDataCollector:
@@ -39,6 +48,29 @@ class FlightDataCollector:
         self.last_request_time = 0
         self.requests_today = 0
         self.day_start = time.time() // 86400 * 86400 
+
+    async def wait_for_next_slot(self):
+        now = time.time()
+        
+        # Check if it's a new day
+        current_day_start = now // 86400 * 86400
+        if current_day_start > self.day_start:
+            logging.info("New day started, resetting request counter")
+            self.requests_today = 0
+            self.day_start = current_day_start
+
+        if self.requests_today >= DAILY_LIMIT:
+            wait_time = self.day_start + 86400 - now
+            logging.warning(f"Daily limit reached. Waiting {wait_time:.2f} seconds until midnight UTC")
+            await asyncio.sleep(wait_time + 1)
+            self.requests_today = 0
+            return
+
+        time_since_last = now - self.last_request_time
+        if time_since_last < REQUEST_INTERVAL:
+            wait_time = REQUEST_INTERVAL - time_since_last
+            logging.info(f"Waiting {wait_time:.2f} seconds for rate limit")
+            await asyncio.sleep(wait_time)
 
     async def fetch_flight_data(self):
         await self.wait_for_next_slot()
