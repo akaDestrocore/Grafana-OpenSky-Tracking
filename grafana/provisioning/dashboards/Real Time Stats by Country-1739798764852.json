@@ -1,0 +1,514 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "dashboard",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Other dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC8CF489ED229D3A2"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#eb369f",
+            "mode": "shades"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 200,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 4,
+        "x": 3,
+        "y": 0
+      },
+      "id": 63,
+      "maxDataPoints": 10000,
+      "options": {
+        "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PC8CF489ED229D3A2"
+          },
+          "query": "from(bucket: \"flights\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"flights\")\r\n  |> filter(fn: (r) => r[\"origin_country\"] == \"${country_selection}\")\r\n  |> filter(fn: (r) => r._field == \"on_ground\")\r\n  |> filter(fn: (r) => r._value == true)\r\n  |> group() \r\n  |> count()\r\n  |> last()\r\n  |> keep(columns: [\"_value\"])  ",
+          "refId": "A"
+        }
+      ],
+      "title": "Airport congestion",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC8CF489ED229D3A2"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 1000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 18,
+        "w": 16,
+        "x": 7,
+        "y": 0
+      },
+      "id": 64,
+      "maxDataPoints": 10000,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "#1cfdb9"
+                },
+                "opacity": 1,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 11,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/plane.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "A"
+            },
+            "location": {
+              "latitude": "latitude",
+              "longitude": "longitude",
+              "mode": "coords"
+            },
+            "name": "Layer 1",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "zero",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 2
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PC8CF489ED229D3A2"
+          },
+          "query": "from(bucket: \"flights\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._field == \"latitude\" or r._field == \"longitude\")\r\n  |> filter(fn: (r) => r[\"origin_country\"] == \"${country_selection}\")\r\n  |> group(columns: [\"icao24\", \"origin_country\"])\r\n  |> pivot(rowKey: [\"_time\", \"icao24\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> filter(fn: (r) => exists r.latitude and exists r.longitude)\r\n  |> top(n: 1, columns: [\"_time\"])\r\n  |> group()\r\n  |> yield(name: \"flights_position\")",
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "type": "geomap"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC8CF489ED229D3A2"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#1cfdb9",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 4,
+        "x": 3,
+        "y": 8
+      },
+      "id": 58,
+      "maxDataPoints": 10000,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PC8CF489ED229D3A2"
+          },
+          "query": "from(bucket: \"flights\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"country_stats\")\r\n  |> filter(fn: (r) => r[\"country\"] == \"${country_selection}\")\r\n  |> filter(fn: (r) => r._field == \"flight_count\")\r\n  |> last()\r\n  |> drop(columns: [\"_measurement\", \"_field\", \"_start\", \"_stop\", \"country\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "Active Flights",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC8CF489ED229D3A2"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#eb369f",
+            "mode": "shades"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 1000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#eb369f",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 3,
+        "y": 18
+      },
+      "id": 65,
+      "maxDataPoints": 10000,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PC8CF489ED229D3A2"
+          },
+          "query": "from(bucket: \"flights\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"country_stats\")\r\n  |> filter(fn: (r) => r._field == \"flight_count\")\r\n  |> group(columns: [\"country\"])\r\n  |> last()\r\n  |> group()\r\n  |> sort(columns: [\"_value\"], desc: true)\r\n  |> limit(n: 5)\r\n  |> rename(columns: {_value: \"Flights\", country: \"Country\"})\r\n  |> keep(columns: [\"Country\", \"Flights\", \"_time\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "TOP 5",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC8CF489ED229D3A2"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#eb369f",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "max": 6000,
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 15,
+        "y": 18
+      },
+      "id": 61,
+      "maxDataPoints": 10000,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PC8CF489ED229D3A2"
+          },
+          "query": "from(bucket: \"flights\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"flights\")\r\n  |> filter(fn: (r) => r[\"origin_country\"] == \"${country_selection}\")\r\n  |> filter(fn: (r) => r._field == \"on_ground\")\r\n  |> last()\r\n  |> map(fn: (r) => ({\r\n      r with\r\n      status: if r._value == true then \"On Ground\" else \"In Air\"\r\n  }))\r\n  |> group(columns: [\"status\"])\r\n  |> count()\r\n  |> keep(columns: [\"status\", \"_value\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "Airplanes in the air/on the ground",
+      "type": "piechart"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "United States",
+          "value": "United States"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "PC8CF489ED229D3A2"
+        },
+        "definition": "from(bucket: \"flights\")\r\n  |> range(start: 1970-01-01T00:00:00Z)\r\n  |> filter(fn: (r) => r._measurement == \"flights\")\r\n  |> keep(columns: [\"origin_country\"])\r\n  |> distinct(column: \"origin_country\")",
+        "description": "",
+        "label": "country_selection ",
+        "name": "country_selection",
+        "options": [],
+        "query": {
+          "query": "from(bucket: \"flights\")\r\n  |> range(start: 1970-01-01T00:00:00Z)\r\n  |> filter(fn: (r) => r._measurement == \"flights\")\r\n  |> keep(columns: [\"origin_country\"])\r\n  |> distinct(column: \"origin_country\")"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Real Time Stats by Country",
+  "uid": "02cubfvs1rd3fv2",
+  "version": 2,
+  "weekStart": ""
+}

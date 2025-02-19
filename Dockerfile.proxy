@@ -2,14 +2,8 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install required packages
-COPY app/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY app/proxy.py /app/
 
-# Copy application code
-COPY app/proxy.py .
+RUN pip install --no-cache-dir influxdb-client==1.36.1 construct==2.10.68 numpy==1.24.3 aiohttp==3.11.12
 
-# Create logs directory
-RUN mkdir -p /app/logs
-
-CMD ["python", "proxy.py"]
+CMD ["python", "/app/proxy.py"]

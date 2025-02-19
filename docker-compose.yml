@@ -4,11 +4,6 @@ services:
     container_name: influxdb
     ports:
       - "8086:8086"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
       DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influxdb2-admin-username
@@ -23,6 +18,11 @@ services:
     volumes:
       - influxdb2-data:/var/lib/influxdb2
       - influxdb2-config:/etc/influxdb2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   grafana:
     image: grafana/grafana
@@ -36,7 +36,8 @@ services:
     env_file:
       - .env.grafana
     depends_on:
-      - influxdb
+       influxdb:
+        condition: service_healthy
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -61,9 +62,6 @@ services:
     depends_on:
       influxdb:
         condition: service_healthy
-    volumes:
-      - ./app:/app
-      - ./logs:/app/logs
 
 secrets:
   influxdb2-admin-username:

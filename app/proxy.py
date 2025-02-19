@@ -13,12 +13,11 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/app/logs/flight_collector.log'),
         logging.StreamHandler()
     ]
 )
 
-# InfluxDB configuration from environment variables
+# InfluxDB config
 INFLUXDB_URL = os.getenv('INFLUXDB_URL', 'http://localhost:8086')
 INFLUXDB_TOKEN_FILE = os.getenv('INFLUXDB_TOKEN_FILE')
 if INFLUXDB_TOKEN_FILE and os.path.exists(INFLUXDB_TOKEN_FILE):

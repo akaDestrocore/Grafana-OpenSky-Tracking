@@ -1,4 +1,4 @@
+influxdb-client==1.36.1
+construct==2.10.68
+numpy==1.24.3
 aiohttp==3.11.12
-influxdb-client==1.48.0
-numpy==1.26.4
-requests==2.31.0
